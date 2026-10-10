@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human Search Engine - AI Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; }
+        .active-tab { background: #1e293b !important; border-color: #334155 !important; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+    <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col justify-between p-3 select-none hidden md:flex">
+        <div class="flex flex-col gap-4">
+            <div class="flex items-center gap-2 px-2 py-3 border-b border-slate-800">
+                <i class="fa-solid fa-code text-emerald-400 text-lg"></i>
+                <h1 class="text-sm font-bold tracking-wider text-white">Human <span class="text-emerald-400">Search Engine</span></h1>
+            </div>
+            <button type="button" onclick="location.reload()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2.5 px-3 rounded-lg flex items-center gap-2 transition cursor-pointer">
+                <i class="fa-solid fa-plus"></i> New Studio Chat
+            </button>
+            <div class="flex flex-col gap-1 overflow-y-auto max-h-[calc(100vh-200px)]">
+                <span class="text-[10px] font-bold text-slate-500 px-2 py-1 uppercase tracking-wider">Studios & Tools</span>
+                <button type="button" onclick="selectCategory('website')" id="btn-website" class="active-tab text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-900 transition flex items-center gap-2 cursor-pointer border border-transparent">
+                    <i class="fa-solid fa-globe text-emerald-400 w-4"></i> Websites & Store
+                </button>
+                <button type="button" onclick="selectCategory('gaming')" id="btn-gaming" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:bg-slate-900 transition flex items-center gap-2 cursor-pointer border border-transparent">
+                    <i class="fa-solid fa-gamepad text-amber-400 w-4"></i> Game Dev (₹29)
+                </button>
+                <button type="button" onclick="selectCategory('bugbounty')" id="btn-bugbounty" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:bg-slate-900 transition flex items-center gap-2 cursor-pointer border border-transparent">
+                    <i class="fa-solid fa-shield-halved text-blue-400 w-4"></i> Bug Bounty
+                </button>
+                <button type="button" onclick="selectCategory('apps')" id="btn-apps" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:bg-slate-900 transition flex items-center gap-2 cursor-pointer border border-transparent">
+                    <i class="fa-solid fa-mobile-screen text-purple-400 w-4"></i> Apps & Chat
+                </button>
+                <button type="button" onclick="selectCategory('hardware')" id="btn-hardware" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:bg-slate-900 transition flex items-center gap-2 cursor-pointer border border-transparent">
+                    <i class="fa-solid fa-microchip text-red-400 w-4"></i> Drones & IoT
+                </button>
+                <button type="button" onclick="selectCategory('github')" id="btn-github" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:bg-slate-900 transition flex items-center gap-2 cursor-pointer border border-transparent">
+                    <i class="fa-brands fa-github text-slate-300 w-4"></i> GitHub Tools
+                </button>
+                <button type="button" onclick="selectCategory('python')" id="btn-python" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:bg-slate-900 transition flex items-center gap-2 cursor-pointer border border-transparent">
+                    <i class="fa-brands fa-python text-yellow-400 w-4"></i> Python / Go / Asm
+                </button>
+                <button type="button" onclick="selectCategory('linux')" id="btn-linux" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:bg-slate-900 transition flex items-center gap-2 cursor-pointer border border-transparent">
+                    <i class="fa-solid fa-terminal text-orange-400 w-4"></i> Linux / Shell
+                </button>
+            </div>
+        </div>
+        <div class="border-t border-slate-800 pt-3">
+            <button type="button" onclick="openLogin()" id="authBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-slate-200 text-xs px-3 py-2.5 rounded-lg font-bold border border-slate-800 transition cursor-pointer flex items-center justify-between">
+                <span class="flex items-center gap-2"><i class="fa-solid fa-user text-emerald-400"></i> Login / Register</span>
+                <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col justify-between bg-slate-900 h-full overflow-hidden">
+        <header class="bg-slate-950 border-b border-slate-800 py-3 px-4 flex justify-between items-center md:hidden">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-code text-emerald-400 text-base"></i>
+                <h1 class="text-xs font-extrabold text-white">Human <span class="text-emerald-400">Search Engine</span></h1>
+            </div>
+            <button type="button" onclick="openLogin()" id="authBtnMobile" class="bg-slate-900 text-white text-[11px] px-3 py-1.5 rounded-lg font-bold border border-slate-800">
+                <i class="fa-solid fa-user"></i> Login
+            </button>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-6 max-w-4xl w-full mx-auto">
+            <div class="flex items-start gap-3 bg-slate-950 p-4 rounded-xl border border-slate-800">
+                <div class="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-slate-950 font-bold shrink-0">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <h2 id="boxTitle" class="text-sm font-bold text-white flex items-center gap-2">Advanced Website & Dating/Store Generator (100% Free)</h2>
+                    <p class="text-xs text-slate-400">चैट में अपनी रिक्वायरमेंट टाइप करें। आपके द्वारा चुनी गई कैटेगरी के अनुसार एआई कोड और सेटअप गाइड तैयार कर देगा।</p>
+                    <div class="mt-1">
+                        <span id="badgeStatus" class="text-[10px] font-bold text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded border border-emerald-800/60">Free Trial Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="resultArea" class="hidden flex-col gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-1">
+                        <div class="flex justify-between bg-slate-950 px-3 py-2 rounded-t border border-slate-800 text-xs">
+                            <span class="text-amber-300 font-bold" id="codeHeader">Source Code / Script</span>
+                            <button type="button" onclick="copyText('codeBox')" class="bg-slate-800 hover:bg-slate-700 text-white px-2 py-0.5 rounded cursor-pointer text-[11px]">Copy</button>
+                        </div>
+                        <pre class="bg-slate-950/80 border border-slate-800 p-3 rounded-b text-[11px] font-mono text-emerald-400 h-64 overflow-auto"><code id="codeBox"></code></pre>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <div class="flex justify-between bg-slate-950 px-3 py-2 rounded-t border border-slate-800 text-xs">
+                            <span class="text-blue-300 font-bold">Setup & Run Guide</span>
+                            <button type="button" onclick="copyText('guideBox')" class="bg-slate-800 hover:bg-slate-700 text-white px-2 py-0.5 rounded cursor-pointer text-[11px]">Copy</button>
+                        </div>
+                        <pre class="bg-slate-950/80 border border-slate-800 p-3 rounded-b text-[11px] font-mono text-blue-300 h-64 overflow-auto"><code id="guideBox"></code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 bg-slate-900 border-t border-slate-800">
+            <div class="max-w-4xl mx-auto flex flex-col gap-2 bg-slate-950 border border-slate-800 rounded-2xl p-3 shadow-2xl focus-within:border-emerald-500 transition">
+                <label id="labelPrompt" class="text-[11px] font-bold text-slate-400 px-1">अपनी जरूरत विस्तार से लिखें (जैसे: Dating Website, E-commerce Store):</label>
+                <textarea id="queryInput" rows="2" class="bg-transparent text-slate-100 text-xs focus:outline-none placeholder-slate-600 resize-none px-1" placeholder="यहाँ मैसेज टाइप करें..."></textarea>
+                <div class="flex justify-between items-center pt-2 border-t border-slate-900">
+                    <span class="text-[10px] text-slate-500">Press Generate to execute</span>
+                    <button type="button" onclick="generateAction()" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 px-4 py-2 rounded-xl font-black text-xs transition cursor-pointer shadow flex items-center gap-1.5">
+                        <i class="fa-solid fa-paper-plane"></i> Generate Code
+                    </button>
+                </div>
+            </div>
+            <div class="text-center mt-2">
+                <span class="text-[10px] text-slate-500">&copy; 2026 Human Search Engine. All Rights Reserved.</span>
+            </div>
+        </div>
+    </main>
+
+    <div id="loginModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-slate-950 border border-slate-800 p-6 rounded-2xl max-w-xs w-full flex flex-col gap-4 text-center relative shadow-2xl">
+            <button type="button" onclick="closeLogin()" class="absolute top-3 right-3 text-slate-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-sm font-black text-white">Google Verified Access</h3>
+            <p class="text-[11px] text-slate-400">सुरक्षा कारणों से केवल असली Google अकाउंट (Gmail) से ही लॉगिन मान्य है।</p>
+            <div id="g_id_onload" data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com" data-callback="handleGoogleSignIn" data-auto_prompt="false"></div>
+            <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="sign_in_with" data-size="large" data-logo_alignment="center"></div>
+            <button type="button" onclick="closeLogin()" class="text-[10px] text-slate-400 underline cursor-pointer mt-2">Cancel / Close</button>
+        </div>
+    </div>
+
+    <div id="payModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-slate-950 border border-emerald-500/50 p-6 rounded-2xl max-w-xs w-full flex flex-col gap-3 text-center relative shadow-2xl">
+            <h3 id="payModalTitle" class="text-sm font-black text-white">Unlock Pro Tool / Pass</h3>
+            <p id="payModalDesc" class="text-[11px] text-slate-300">विशेष पास: गेमिंग स्टूडियो के लिए ₹29 (12 घंटे वैलिडिटी)</p>
+            <div class="bg-white p-2 rounded mx-auto w-36 h-36 flex items-center justify-center">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=upi://pay?pa=yourupi@paytm&pn=HumanSearchEngine&am=29" alt="QR" class="w-full h-full object-contain">
+            </div>
+            <p class="text-[10px] text-slate-400">पेमेंट के बाद स्क्रीनशॉट व्हाट्सएप पर भेजें!</p>
+            <a id="waPayBtn" href="https://wa.me/91YOUR_WHATSAPP_NUMBER?text=Hi,%20I%20have%20paid%20₹29%20for%20Gaming%20Pass." target="_blank" class="bg-green-600 hover:bg-green-500 text-white font-bold py-2 rounded text-xs flex items-center justify-center gap-1">
+                <i class="fa-brands fa-whatsapp"></i> Send on WhatsApp
+            </a>
+            <button type="button" onclick="closePay()" class="text-[10px] text-slate-400 underline cursor-pointer">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        let activeCat = 'website';
+        let gamingPassExpiry = 0;
+
+        function selectCategory(cat) {
+            activeCat = cat;
+            document.querySelectorAll('[id^="btn-"]').forEach(b => b.classList.remove('active-tab', 'bg-slate-900', 'border-slate-700'));
+            const targetBtn = document.getElementById('btn-' + cat);
+            if(targetBtn) targetBtn.classList.add('active-tab', 'bg-slate-900', 'border-slate-700');
+
+            const title = document.getElementById('boxTitle');
+            const badge = document.getElementById('badgeStatus');
+            const label = document.getElementById('labelPrompt');
+
+            if(cat === 'website') {
+                title.innerHTML = `<i class="fa-solid fa-globe text-emerald-400"></i> Advanced Website & Dating/Store Generator (100% Free)`;
+                badge.textContent = "Free Trial Active";
+                badge.className = "text-[10px] font-bold text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded border border-emerald-800/60";
+                label.textContent = "अपनी जरूरत विस्तार से लिखें (जैसे: Dating Website, E-commerce Store):";
+            } else if(cat === 'gaming') {
+                title.innerHTML = `<i class="fa-solid fa-gamepad text-amber-400"></i> Game Dev Studio (₹29 / 12 Hours Pass)`;
+                badge.textContent = "Gaming Pass: ₹29 (12 Hrs)";
+                badge.className = "text-[10px] font-bold text-amber-400 bg-amber-950/60 px-2.5 py-1 rounded border border-amber-800/60";
+                label.textContent = "कौन सा गेम बनाना है? (जैसे: Truck Racing, India Roads):";
+            } else {
+                title.innerHTML = `<i class="fa-solid fa-crown text-amber-400"></i> ${cat.toUpperCase()} Studio (Paid Tool)`;
+                badge.textContent = "Paid Tool (₹29 / ₹199)";
+                badge.className = "text-[10px] font-bold text-amber-400 bg-amber-950/60 px-2.5 py-1 rounded border border-amber-800/60";
+                label.textContent = "इस टूल या स्क्रिप्ट की डिटेल लिखें:";
+            }
+        }
+
+        function openLogin() {
+            const modal = document.getElementById('loginModal');
+            if(modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
+        }
+
+        function closeLogin() {
+            const modal = document.getElementById('loginModal');
+            if(modal) { modal.classList.remove('flex'); modal.classList.add('hidden'); }
+        }
+
+        function handleGoogleSignIn(response) {
+            try {
+                const base64Url = response.credential.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+                const googleUser = JSON.parse(jsonPayload);
+                if (googleUser.email && googleUser.email.endsWith('@gmail.com')) {
+                    document.getElementById('authBtn').innerHTML = `<span class="flex items-center gap-2"><i class="fa-solid fa-user-check text-emerald-400"></i> ${googleUser.name}</span>`;
+                    closeLogin();
+                    alert(`सफलतापूर्वक Google Verified लॉगिन हो गया!\nEmail: ${googleUser.email}`);
+                } else {
+                    alert('केवल @gmail.com वाली गूगल आईडी ही मान्य है!');
+                }
+            } catch (error) {
+                alert('Google वेरिफिकेशन विफल रहा।');
+            }
+        }
+
+        function generateAction() {
+            const queryBox = document.getElementById('queryInput');
+            if(!queryBox) return;
+            const query = queryBox.value.trim();
+            if(!query) { alert('कृपया सर्च बॉक्स में कुछ लिखें!'); return; }
+
+            const resArea = document.getElementById('resultArea');
+            if(resArea) { resArea.classList.remove('hidden'); resArea.classList.add('flex'); }
+
+            let code = `<!DOCTYPE html>\n<html lang="en">\n<head><title>${query}</title></head>\n<body>\n    <h1>${query}</h1>\n</body>\n</html>`;
+            let guide = `=== SETUP GUIDE ===\n1. Copy code.\n2. Save as index.html\n3. Run in browser.`;
+
+            document.getElementById('codeBox').textContent = code;
+            document.getElementById('guideBox').textContent = guide;
+            document.getElementById('codeHeader').textContent = `${query} - Source Code`;
+        }
+
+        function copyText(id) {
+            const textElem = document.getElementById(id);
+            if(!textElem) return;
+            navigator.clipboard.writeText(textElem.textContent).then(() => alert('सफलतापूर्वक कॉपी हो गया!'));
+        }
+    </script>
+</body>
+                      </html>
+                      
